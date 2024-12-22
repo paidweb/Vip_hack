@@ -1,0 +1,134 @@
+<?php
+session_start();
+require 'db.php';
+
+if (!isset($_SESSION['key'])) {
+    header("Location: vip_hack.html");
+    exit;
+}
+
+$key = $_SESSION['key'];
+$stmt = $conn->prepare("SELECT * FROM users WHERE key_value = ?");
+$stmt->bind_param("s", $key);
+$stmt->execute();
+$user = $stmt->get_result()->fetch_assoc();
+
+if (new DateTime() > new DateTime($user['expiration'])) {
+    session_destroy();
+    header("Location: vip_hack.html?expired=1");
+    exit;
+}
+
+$timeRemaining = (new DateTime($user['expiration']))->getTimestamp() - time();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #FF6347; /* Tomato color */
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .countdown {
+            font-size: 28px;
+            font-weight: bold;
+            color: #32CD32; /* Lime Green */
+            margin: 10px 0;
+        }
+        a {
+            color: #FFD700; /* Gold color */
+            font-size: 18px;
+            margin: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid #FFD700;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        a:hover {
+            background-color: #FFD700;
+            color: #1a1a1a;
+            text-decoration: none;
+        }
+        .contact-button {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 25px;
+            background-color: #008CBA;
+            border-radius: 5px;
+            font-size: 18px;
+            color: white;
+            font-weight: bold;
+            text-decoration: none;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .contact-button:hover {
+            background-color: #005f73;
+        }
+        .alert {
+            color: red;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Welcome to Your Dashboard</h1>
+    <p>Key Expiration Countdown: <span id="countdown" class="countdown"></span></p>
+
+    <a href="vip_hack.php">♎ OPEN HACK‼️</a>
+
+
+
+    <a href="logout.php">Logout</a>
+
+
+
+    <!-- Contact Developer Button -->
+    <a href="https://t.me/Its_developer_satyam" target="_blank" class="contact-button">Contact Developer</a>
+</div>
+
+<script>
+const countdown = document.getElementById('countdown');
+let timeRemaining = <?php echo $timeRemaining; ?>;
+
+function updateCountdown() {
+    if (timeRemaining <= 0) {
+        alert('Session expired!');
+        window.location = 'logout.php';
+    }
+    const minutes = Math.floor(timeRemaining / 60);
+    const seconds = timeRemaining % 60;
+    countdown.textContent = `${minutes}m ${seconds}s`;
+    timeRemaining--;
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+</script>
+
+</body>
+</html>

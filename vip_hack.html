@@ -1,0 +1,182 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>😈VIP HACK 😈</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: black;
+      color: lime;
+      font-family: monospace;
+      overflow: hidden;
+    } #container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+      text-align: center;
+    }
+
+    .banner {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px lime;
+    }
+
+    .typing-effect {
+      margin: 10px 0;
+      font-size: 1.2em;
+    }
+
+    .table-container {
+      margin-top: 20px;
+    }
+
+    table {
+      width: 80%;
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid lime;
+      text-align: center;
+    }
+
+    th {
+      background-color: #004400;
+    }
+
+    .timer {
+      font-size: 1.5em;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <div class="banner" id="banner">💲SS VIP HACK⚠️ </div>
+    <div class="typing-effect" id="status">[Initializing...]</div>
+    <div class="typing-effect" id="connection"></div>
+    <div class="timer" id="countdown">[Timer] Countdown:  0 : 59</div>
+    <div class="table-container">
+      <h3>Current Period</h3>
+      <table id="current-period-table">
+        <thead>
+          <tr>
+            <th>PERIOD</th>
+            <th>RESULT</th>
+          </tr>
+        </thead>
+        <tbody id="current-period"></tbody>
+      </table>
+      <h3>Historical Data - Last 5 Periods</h3>
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>PERIOD</th>
+            <th>RESULT</th>
+          </tr>
+        </thead>
+        <tbody id="history"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const statusText = document.getElementById("status");
+    const connectionText = document.getElementById("connection");
+    const countdown = document.getElementById("countdown");
+    const currentPeriodTable = document.getElementById("current-period");
+    const historyTable = document.getElementById("history");
+
+    let history = [];
+    const pattern = ["SMALL", "SMALL", "BIG", "SMALL", "SMALL", "BIG", "SMALL", "BIG"];
+    const patternLength = pattern.length;
+
+    let typingEffect = (text, element, delay = 50, callback = null) => {
+      let i = 0;
+      const interval = setInterval(() => {
+        element.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          if (callback) callback();
+        }
+      }, delay);
+    };
+
+    let simulateConnection = () => {
+      statusText.textContent = "";
+      typingEffect("[Establishing Secure Connection...]", statusText, 30, () => {
+        typingEffect("[Encrypting Data Stream...]", connectionText, 30, () => {
+          typingEffect("[Connected to Server | Awaiting Data]", connectionText, 30);
+        });
+      });
+    };
+
+    let updatePeriodAndTimer = () => {
+      const now = new Date();
+      const totalMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+      const currentPattern = pattern[totalMinutes % patternLength];
+      const period_1m = now.getUTCFullYear().toString() + 
+                        (now.getUTCMonth() + 1).toString().padStart(2, "0") + 
+                        now.getUTCDate().toString().padStart(2, "0") + 
+                        "1000" + 
+                        (10001 + totalMinutes).toString();
+
+      history.unshift({ period: period_1m, result: currentPattern });
+      if (history.length > 5) history.pop();
+
+      currentPeriodTable.innerHTML = `
+        <tr>
+          <td>${period_1m}</td>
+          <td>${currentPattern}</td>
+        </tr>
+      `;
+
+      historyTable.innerHTML = history
+        .map(
+          (entry) => `
+          <tr>
+            <td>${entry.period}</td>
+            <td>${entry.result}</td>
+          </tr>`
+        )
+        .join("");
+    };
+
+    let startCountdown = () => {
+      let remainingSeconds = 59;
+
+      const timerInterval = setInterval(() => {
+        const minutes = Math.floor(remainingSeconds / 60);
+        const seconds = remainingSeconds % 60;
+
+        countdown.textContent = `[Timer] Countdown: ${minutes
+          .toString()
+          .padStart(2, " ")} : ${seconds.toString().padStart(2, " ")}`;
+
+        remainingSeconds--;
+
+        if (remainingSeconds < 0) {
+          remainingSeconds = 59;
+          updatePeriodAndTimer();
+        }
+      }, 1000);
+    };
+
+    simulateConnection();
+    updatePeriodAndTimer();
+    startCountdown();
+  </script>
+</body>
+</html>
